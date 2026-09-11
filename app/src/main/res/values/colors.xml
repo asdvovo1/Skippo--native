@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- mirrors the CSS custom properties from index.html -->
+	<color name="sky_top">#4A9FE0</color>
+	<color name="sky_bot">#8FD0F0</color>
+	<color name="accent">#FF5A3C</color>
+	<color name="accent_d">#CC3D24</color>
+	<color name="ink">#2A2440</color>
+	<color name="ic_launcher_background">#5A93C1</color>
+</resources>

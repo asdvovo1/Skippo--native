@@ -1,0 +1,26 @@
+{
+	"name": "Skippo Android (Kotlin + Compose)",
+	"image": "mcr.microsoft.com/devcontainers/java:17-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+	"hostRequirements": {
+		"cpus": 4,
+		"memory": "8gb",
+		"storage": "32gb"
+	},
+	"postCreateCommand": "bash .devcontainer/setup.sh",
+	"remoteEnv": {
+		"ANDROID_HOME": "/usr/local/android-sdk",
+		"ANDROID_SDK_ROOT": "/usr/local/android-sdk",
+		"PATH": "${containerEnv:PATH}:/usr/local/android-sdk/platform-tools:/usr/local/android-sdk/cmdline-tools/latest/bin"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"fwcd.kotlin",
+				"vscjava.vscode-gradle"
+			]
+		}
+	}
+}
