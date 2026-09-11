@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#FF5A3C</color>
+    <color name="accent_d">#CC3D24</color>
+    <color name="ic_launcher_background">#5A93C1</color>
+    <color name="ink">#2A2440</color>
+    <color name="sky_bot">#8FD0F0</color>
+    <color name="sky_top">#4A9FE0</color>
+    <string name="gcm_defaultSenderId" translatable="false">550950416443</string>
+    <string name="google_api_key" translatable="false">AIzaSyAVmLUwBbd6cGfKZmwYb1UqTJUTu79PCuM</string>
+    <string name="google_app_id" translatable="false">1:550950416443:android:cc12963d2f43ef10ceec1e</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAVmLUwBbd6cGfKZmwYb1UqTJUTu79PCuM</string>
+    <string name="google_storage_bucket" translatable="false">skip-7eb24.firebasestorage.app</string>
+    <string name="project_id" translatable="false">skip-7eb24</string>
+    <style name="Theme.Skippo" parent="@android:style/Theme.Material.NoActionBar">
+		<item name="android:windowBackground">@color/sky_bot</item>
+		<item name="android:statusBarColor">@android:color/transparent</item>
+		<item name="android:navigationBarColor">@android:color/transparent</item>
+		<item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+	</style>
+</resources>

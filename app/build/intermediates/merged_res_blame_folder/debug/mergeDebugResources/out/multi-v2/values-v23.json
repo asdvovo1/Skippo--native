@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.skippo.game.app-mergeDebugResources-53:/values-v23/values-v23.xml",
+            "map": [
+                {
+                    "source": "/home/codespace/.gradle/caches/transforms-4/4ec8f01b6a349c44a2f5cc9ea5557c99/transformed/work-runtime-2.7.0/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,121",
+                        "endColumns": "65,62",
+                        "endOffsets": "116,179"
+                    }
+                }
+            ]
+        }
+    ]
+}
