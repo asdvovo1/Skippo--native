@@ -148,6 +148,10 @@ object Sfx {
 	private var mNext = 0L
 	private var mStep = 0
 
+	// لما هتاف ملعب VIP يشتغل، الموسيقى المولّدة بتتقفل مؤقتًا من غير ما
+	// نلمس إعداد Ambient بتاع اللاعب - أول ما الهتاف يقف ترجع زي ما كانت.
+	@Volatile private var musicDuck = false
+
 	private val M_SCALES = mapOf(
 		"hills" to intArrayOf(0, 4, 7, 11, 12, 7, 4, 2),
 		"forest" to intArrayOf(0, 3, 7, 10, 12, 10, 7, 3),
@@ -265,15 +269,32 @@ object Sfx {
 	}
 
 	private fun musicSet(on: Boolean) {
-		if (on && ambientOn) {
+		if (on && ambientOn && !musicDuck) {
 			mOn = true
 			mTarget = 0.05 * (vol / 100.0)
 			mTc = 0.5
-			if (mNext == 0L) mNext = clock + (0.12 * SR).toLong()
+			// لو الموسيقى كانت مقفولة شوية، الخطوة الجاية بتبقى قديمة والسيكوينسر
+			// كان هيرمي 24 نوتة مرة واحدة أول ما ترجع. نبدأ من دلوقتي.
+			if (mNext == 0L || mNext < clock) mNext = clock + (0.12 * SR).toLong()
 		} else {
 			mOn = false
 			mTarget = 0.0
 			mTc = 0.12
+		}
+	}
+
+	/**
+	 * يقفل / يفتح موسيقى الخلفية المولّدة من غير ما يلمس الريح.
+	 *
+	 * بيتندَه من [Voices] لما هتاف ملعب VIP يشتغل: الهتاف بيبقى هو الصوت
+	 * الرئيسي والموسيقى بتفصل، وأول ما الهتاف يقف الموسيقى ترجع.
+	 */
+	fun setAmbientMusic(on: Boolean) {
+		synchronized(lock) {
+			val duck = !on
+			if (musicDuck == duck) return
+			musicDuck = duck
+			musicSet(windOn)
 		}
 	}
 

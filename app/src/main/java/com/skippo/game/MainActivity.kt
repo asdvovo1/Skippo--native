@@ -170,9 +170,11 @@ fun GameRoot() {
 			!S.sfx -> Voices.stopAll()
 			nav == Nav.Pause -> Voices.pauseAll()
 			nav == Nav.Playing || nav == Nav.Shop -> {
-				Voices.setPlayer(if (Players[S.player].gem != null) S.player else null)
-				Voices.setArena(if (Catalog.hasFlares(S.theme)) S.theme else null)
-				Voices.refresh()
+				// لاعب VIP  -> صوت اللاعب بس، وهتاف الملعب بيفصل.
+				// لاعب عادي -> هتاف ملعب الـ VIP بيشتغل (اللاعب العادي
+				// مالوش صوت) والموسيقى المولّدة بتفصل طول ما هو شغال.
+				// كل المنطق جوّه Voices.apply() عشان مايتكررش في أكتر من مكان.
+				Voices.apply(S.player, S.theme, true)
 			}
 			else -> Voices.stopAll()
 		}

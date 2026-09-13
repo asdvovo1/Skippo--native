@@ -38,7 +38,7 @@ class Store(ctx: Context) {
 		 * مهم: نسخة التجربة بتحفظ في خانة منفصلة خالص، يعني تقدمك الحقيقي
 		 * مابيتلمسش. رجّع السطر ده false وكل حاجة ترجع زي ما كانت بالظبط.
 		 */
-		const val UNLOCK_ALL = false
+		const val UNLOCK_ALL = true
 
 		/** خانة الحفظ. نسخة التجربة ليها خانتها لوحدها. */
 		val LS = if (UNLOCK_ALL) "skip_save_v21_test" else "skip_save_v21"

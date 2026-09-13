@@ -130,7 +130,10 @@ object Players {
 		"neymar" to PlayerDef("neymar", "نيمار", "Neymar", gem = 45, frames = 12, fw = 85, fh = 176, c = Color(0xFFF3DA2A), c2 = Color(0xFF8F8019)),
 		"vini" to PlayerDef("vini", "فينيسيوس جونيور", "Vinicius Jr", price = 3800, frames = 16, fw = 96, fh = 176, c = Color(0xFFF2E245), c2 = Color(0xFF8E8528)),
 		"aboutrika" to PlayerDef("aboutrika", "محمد أبو تريكة", "Aboutrika", gem = 50, frames = 12, fw = 92, fh = 176, c = Color(0xFFC80D18), c2 = Color(0xFF75070E)),
-		"yamal" to PlayerDef("yamal", "لامين يامال", "Yamal", gem = 50, frames = 16, fw = 103, fh = 176, c = Color(0xFFBE1D28), c2 = Color(0xFF6F1117)),
+		// شيت يامال مقاسه 1600x171 = 16 فريم × 100 بكسل بالظبط. كان مكتوب
+		// 103x176 فالرسمة كانت بتقرا من برّه حدود الصورة، فكانت بتظهر حتة من
+		// الفريم اللي بعده ويتقص جزء من اللاعب وهو بيجري.
+		"yamal" to PlayerDef("yamal", "لامين يامال", "Yamal", gem = 50, frames = 16, fw = 100, fh = 171, c = Color(0xFFBE1D28), c2 = Color(0xFF6F1117)),
 		"beckenbauer" to PlayerDef("beckenbauer", "فرانتز بيكنباور", "Beckenbauer", price = 4000, frames = 12, fw = 87, fh = 176, c = Color(0xFFFABE98), c2 = Color(0xFF937059)),
 		"haaland" to PlayerDef("haaland", "إيرلينج هالاند", "Haaland", gem = 55, frames = 12, fw = 93, fh = 176, c = Color(0xFFE1292E), c2 = Color(0xFF84181B)),
 		"cruyff" to PlayerDef("cruyff", "يوهان كرويف", "Cruyff", price = 4200, frames = 12, fw = 106, fh = 176, c = Color(0xFFEC7B39), c2 = Color(0xFF8B4822)),
