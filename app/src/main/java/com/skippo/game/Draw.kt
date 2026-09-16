@@ -1109,7 +1109,7 @@ class Renderer(val e: Engine, val S: Store) {
 		if (sheet == null) {
 			// art still decoding, or missing - a plain marker keeps the run readable
 			drawCircle(def.c, p.r * 0.6f, Offset(p.x, p.y))
-			drawRunnerBall(pwd)
+			drawRunnerBall()
 			return
 		}
 
@@ -1137,29 +1137,37 @@ class Renderer(val e: Engine, val S: Store) {
 				)
 			}
 		}
-		drawRunnerBall(pwd)
+		drawRunnerBall()
 	}
 
-	/** A football stays just ahead of every runner, rolls while running, and
-	 * follows the player's vertical position through both jumps. */
-	private fun DrawScope.drawRunnerBall(playerWidth: Float) {
-		val br = p.r * 0.44f
-		val bounce = if (p.g) abs(sin(e.runCyc.toDouble() * 0.88)).toFloat() * p.r * 0.16f else 0f
-		val lead = max(p.r * 1.10f, playerWidth * 0.50f)
-		val bx = p.x + lead + br * 0.92f
-		val by = p.y + p.r - br - bounce
+	/**
+	 * الكورة اللي اللاعب بيزقها برجله: الإنجن هو اللي بيحسب مكانها ولفها
+	 * (زقة كل خطوة وهو بيجري، وتنطيط بالرجل وهو طاير)، والرسم هنا بيعرضها بس.
+	 */
+	private fun DrawScope.drawRunnerBall() {
+		val d = e.drb
+		val br = e.ballR()
 		val groundY = H - e.gh()
+		val bx = p.x + d.lead
+		val by = groundY - d.y
 		val height = max(0f, groundY - (by + br))
-		val shadowScale = (1f - height / max(1f, e.maxRise() + p.r)).coerceIn(0.28f, 1f)
+		val shadowScale = (1f - height / max(1f, e.maxRise() + p.r)).coerceIn(0.25f, 1f)
 		drawOval(
 			Color.Black.copy(alpha = 0.20f * shadowScale),
 			Offset(bx - br * shadowScale, groundY - br * 0.22f),
 			Size(br * 2f * shadowScale, br * 0.44f * shadowScale)
 		)
+		if (d.kickFx > 0f) {
+			// لمعة خفيفة مكان ما الرجل لمست الكورة
+			val k = (d.kickFx / 7f).coerceIn(0f, 1f)
+			drawCircle(
+				Color.White.copy(alpha = 0.26f * k),
+				br * (1.12f + (1f - k) * 0.5f), Offset(bx, by)
+			)
+		}
 		val image = PlayerSprites.ball()
 		if (image != null) {
-			val spin = st.dist / max(1f, br) * 180f / PI.toFloat()
-			rotate(spin, Offset(bx, by)) {
+			rotate(d.spin, Offset(bx, by)) {
 				drawImage(
 					image = image,
 					srcOffset = IntOffset.Zero,

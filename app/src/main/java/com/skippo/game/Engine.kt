@@ -30,6 +30,36 @@ class Flo(var x: Float, var y: Float, var l: Float, var txt: String)
 class GlowPt(var x: Float, var y: Float, var life: Float, var seed: Int)
 class Amb(var type: String, var x: Float, var y: Float, var r: Float, var v: Float, var tw: Float = 0f)
 class TrailPt(var x: Float, var y: Float)
+
+/**
+ * الكورة اللي اللاعب بيسوقها برجله: بيزقها كل خطوة وهو بيجري، ولما ينط
+ * بينططها برجله في الهوا. كل الأرقام بالبكسل ماعدا spin اللي بالدرجات.
+ */
+class Dribble {
+	/** المسافة الأفقية بين نص اللاعب ومركز الكورة. */
+	var lead = 0f
+	var vLead = 0f
+
+	/** ارتفاع مركز الكورة فوق الأرض. */
+	var y = 0f
+	var vy = 0f
+
+	/** زاوية اللف ومعدل اللف (درجة / فريم). */
+	var spin = 0f
+	var spinVel = 0f
+
+	/** آخر لحظة في دورة الخطوات لمست فيها الرجل الكورة. */
+	var lastTouch = -99f
+
+	/** مانع رجفة: مفيش لمستين ورا بعض في نفس اللحطة. */
+	var touchCd = 0f
+
+	/** عدد تنطيطات الرجل في النطة الحالية. */
+	var juggles = 0
+
+	/** فلاش صغير مكان اللمسة عشان الزقة تبان. */
+	var kickFx = 0f
+}
 /** A decorative sky cloud. Named SkyCloud so it does not clash with `object Cloud` (the Firebase layer in Cloud.kt). */
 class SkyCloud(var x: Float, var y: Float, var w: Float, var dur: Float, var t: Float)
 
@@ -96,6 +126,19 @@ class Engine(val S: Store) {
 		const val MENU_DRIFT = 2.8f
 		/** الكورة اللي في اللعب: لما تاخدها بتتحسب 5 كوينز. */
 		const val BALL_COINS = 5
+
+		/** نصف قطر كورة الدربلة كنسبة من نصف قطر اللاعب. */
+		const val BALL_RAD = 0.42f
+		/** جاذبية الكورة أخف من جاذبية اللاعب عشان التنطيط يبان. */
+		const val BALL_GRAV = 0.62f
+		/** قوة الزقة اللي الرجل بتدفع بيها الكورة لقدام. */
+		const val KICK_PUSH = 1.45f
+		/** الرفعة الصغيرة اللي بتاخدها الكورة من طرف الجزمة. */
+		const val KICK_HOP = 1.7f
+		/** قوة تنطيط الكورة بالرجل وهو في الهوا. */
+		const val JUGGLE_UP = 3.4f
+		/** أقصى معدل لف للكورة (درجة/فريم) - أسرع من كده بيبان غير واقعي. */
+		const val SPIN_MAX = 13f
 		val POWTYPES = arrayOf("magnet", "shield", "slow")
 		val SPARK = arrayOf(Color(0xFFFFD54A), Color(0xFFFF9D3C), Color(0xFFFFF2C0))
 		val dv = mapOf(
@@ -132,6 +175,9 @@ class Engine(val S: Store) {
 	 * frozen while airborne so a jump holds one clean pose.
 	 */
 	var runCyc = 0f
+
+	/** حالة الكورة اللي اللاعب بيزقها برجله وبينططها وهو طاير. */
+	val drb = Dribble()
 
 	var curGrav = GRAV
 	var curJump = JUMP_V
@@ -216,6 +262,110 @@ class Engine(val S: Store) {
 	fun speedNow(): Float =
 		(if (st.slowT > 0) st.spd * 0.55f else st.spd) * curWind * max(0.6f, min(1f, W / 620f))
 
+	// ---------------- كورة اللاعب ----------------
+
+	/** نصف قطر الكورة بالبكسل. */
+	fun ballR(): Float = p.r * BALL_RAD
+
+	/** عرض اللاعب على الشاشة - منه نعرف رجله بتوصل لفين. */
+	private fun runnerW(): Float = p.r * 2.55f * Players[S.player].aspect
+
+	/** المسافة الطبيعية بين نص اللاعب والكورة: قدام رجله بشعرة. */
+	private fun restLead(): Float =
+		if (p.g) max(p.r * 0.86f, runnerW() * 0.30f) + ballR()
+		else max(p.r * 0.60f, runnerW() * 0.20f) + ballR() * 0.7f
+
+	/** ترجيع الكورة قدام رجل اللاعب على الأرض. */
+	fun resetDribble() {
+		drb.lead = restLead()
+		drb.vLead = 0f
+		drb.y = ballR()
+		drb.vy = 0f
+		drb.spin = 0f
+		drb.spinVel = 0f
+		drb.lastTouch = -99f
+		drb.touchCd = 0f
+		drb.juggles = 0
+		drb.kickFx = 0f
+	}
+
+	/**
+	 * فيزياء الكورة. على الأرض: كل ما الرجل تكمل نص دورة خطوة بتزق الكورة لقدام
+	 * وترفعها شعرة عن الأرض. في الهوا: الكورة بتفضل تحت رجله وهو بينططها بيها.
+	 * اللف بقى بمعدل واقعي بسقف، بدل اللف المجنون اللي كان مربوط بالمسافة كلها.
+	 */
+	private fun stepDribble(f: Float, spd: Float) {
+		val br = ballR()
+		val rest = restLead()
+		// رجل اللاعب فوق الأرض بقد إيه (صفر وهو ماشي)
+		val footY = max(0f, (H - gh()) - (p.y + p.r))
+		// زقة كل نص دورة خطوات، فالكورة ماشية مع الرجل مش مع الزمن
+		val everyTouch = max(3f, Players[S.player].frames * 0.5f)
+		if (drb.touchCd > 0f) drb.touchCd -= f
+
+		if (p.g) {
+			drb.juggles = 0
+			if (runCyc - drb.lastTouch >= everyTouch && drb.touchCd <= 0f) {
+				drb.lastTouch = runCyc
+				drb.touchCd = 4f
+				drb.vLead += KICK_PUSH + spd * 0.045f
+				if (drb.y <= br * 1.4f) drb.vy = KICK_HOP
+				drb.spinVel += 2.4f
+				drb.kickFx = 7f
+				kickDust()
+			}
+		} else {
+			// اللمسة بتحصل لما الكورة تنزل لمستوى الجزمة وهي نازلة
+			val reach = footY + br * 1.2f
+			if (drb.vy <= 0f && drb.touchCd <= 0f && drb.y <= reach && drb.y >= reach - br * 3f) {
+				drb.vy = JUGGLE_UP + footY * 0.035f
+				drb.vLead += (rest - drb.lead) * 0.22f
+				drb.spinVel = -drb.spinVel * 0.5f + 3f
+				drb.touchCd = 6f
+				drb.juggles++
+				drb.kickFx = 7f
+			}
+		}
+
+		// طيران الكورة ونطتها على الأرض
+		drb.vy -= BALL_GRAV * f
+		drb.y += drb.vy * f
+		if (drb.y <= br) {
+			drb.y = br
+			drb.vy = if (drb.vy < -0.35f) -drb.vy * 0.42f else 0f
+		}
+
+		// الكورة مربوطة قدام رجله بسستة ناعمة، مش ملزوقة في مكان ثابت
+		drb.vLead += (rest - drb.lead) * 0.030f * f
+		drb.vLead *= max(0f, 1f - 0.075f * f)
+		drb.lead += drb.vLead * f
+		drb.lead = drb.lead.coerceIn(rest * 0.55f, rest * 1.95f)
+
+		// لف واقعي: معدل التدحرج مهدّى ومحدود بسقف
+		val roll = (spd / max(1f, br)) * 57.2958f * 0.28f
+		drb.spinVel += (roll - drb.spinVel) * min(1f, 0.10f * f)
+		drb.spinVel = drb.spinVel.coerceIn(-SPIN_MAX, SPIN_MAX)
+		drb.spin += drb.spinVel * f
+		if (drb.spin > 360f || drb.spin < -360f) drb.spin %= 360f
+		if (drb.kickFx > 0f) drb.kickFx -= f
+	}
+
+	/** تراب صغير تحت الكورة وقت الزقة. */
+	private fun kickDust() {
+		if (st.mode != "play") return
+		val bx = p.x + drb.lead
+		val by = (H - gh()) - drb.y
+		for (i in 0 until 3) {
+			pts.add(
+				Pt(
+					bx - ballR() * 0.6f, by + ballR() * 0.8f,
+					-1.6f - Random.nextFloat() * 2.2f, -Random.nextFloat() * 1.4f,
+					10f + Random.nextFloat() * 6f, Color(0xFFFFFFFF), 2.6f
+				)
+			)
+		}
+	}
+
 	// ---------------- lifecycle ----------------
 
 	fun resetPlayer() {
@@ -227,6 +377,7 @@ class Engine(val S: Store) {
 		p.rot = 0f
 		p.sq = 1f
 		p.trailPts.clear()
+		resetDribble()
 	}
 
 	/**
@@ -538,6 +689,7 @@ class Engine(val S: Store) {
 			// Step cycle: paced by real travel, capped so the legs stay readable at
 			// speed, and held still while airborne.
 			if (p.g) runCyc += min(spd * f / STRIDE, CADENCE * f)
+			stepDribble(f, spd)
 
 			if (glowColor() != null) glowTrail.add(GlowPt(p.x, p.y, 1f, st.t))
 			for (gt in glowTrail) { gt.x -= spd * f; gt.life -= 0.045f * f }
@@ -646,6 +798,7 @@ class Engine(val S: Store) {
 			// camera instead of marching on the spot behind the panels.
 			st.dist += MENU_DRIFT * f
 			runCyc += min(MENU_DRIFT * f / STRIDE, CADENCE * f)
+			stepDribble(f, MENU_DRIFT)
 			updAmbient(f, 4f)
 			// The scenery still scrolls outside a run, so anything left in the world
 			// has to travel with it at the same rate instead of hanging in place on

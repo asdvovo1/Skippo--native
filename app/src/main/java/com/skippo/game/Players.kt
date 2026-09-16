@@ -50,7 +50,7 @@ object Players {
 		"trezeguet" to PlayerDef("trezeguet", "محمود تريزيجيه", "Trezeguet", price = 1700, frames = 12, fw = 96, fh = 176, c = Color(0xFFDF5047), c2 = Color(0xFF832F2A)),
 		"ahmedhassan" to PlayerDef("ahmedhassan", "أحمد حسن", "Ahmed Hassan", price = 1800, frames = 12, fw = 90, fh = 176, c = Color(0xFFC2131B), c2 = Color(0xFF720B10)),
 		"aldawsari" to PlayerDef("aldawsari", "سالم الدوسري", "Al-Dawsari", price = 1800, frames = 12, fw = 89, fh = 176, c = Color(0xFF317E5A), c2 = Color(0xFF1D4A35)),
-		"bounou" to PlayerDef("bounou", "ياسين بونو", "Bounou", price = 1900, frames = 16, fw = 104, fh = 176, c = Color(0xFF12974C), c2 = Color(0xFF0A582C)),
+		"bounou" to PlayerDef("bounou", "ياسين بونو", "Bounou", price = 1900, frames = 16, fw = 100, fh = 169, c = Color(0xFF12974C), c2 = Color(0xFF0A582C)),
 		"hossamhassan" to PlayerDef("hossamhassan", "حسام حسن", "Hossam Hassan", price = 1900, frames = 12, fw = 94, fh = 176, c = Color(0xFFC41C21), c2 = Color(0xFF731013)),
 		"kudus" to PlayerDef("kudus", "محمد كودوس", "Kudus", price = 1900, frames = 10, fw = 87, fh = 176, c = Color(0xFF542C1B), c2 = Color(0xFF311910)),
 		"rice" to PlayerDef("rice", "ديكلان رايس", "Declan Rice", price = 2000, frames = 12, fw = 100, fh = 176, c = Color(0xFFF5B99F), c2 = Color(0xFF906C5D)),
@@ -71,7 +71,7 @@ object Players {
 		"casemiro" to PlayerDef("casemiro", "كاسيميرو", "Casemiro", price = 2300, frames = 12, fw = 82, fh = 176, c = Color(0xFFF2D726), c2 = Color(0xFF8E7F16)),
 		"dimaria" to PlayerDef("dimaria", "أنخيل دي ماريا", "Di Maria", price = 2300, frames = 12, fw = 118, fh = 176, c = Color(0xFFB6E0EF), c2 = Color(0xFF6B848C)),
 		"donnarumma" to PlayerDef("donnarumma", "دوناروما", "Donnarumma", price = 2300, frames = 12, fw = 84, fh = 176, c = Color(0xFFA1CA76), c2 = Color(0xFF5F7745)),
-		"emartinez" to PlayerDef("emartinez", "إيميليانو مارتينيز", "E. Martinez", price = 2300, frames = 16, fw = 105, fh = 176, c = Color(0xFF0A5C66), c2 = Color(0xFF06363C)),
+		"emartinez" to PlayerDef("emartinez", "إيميليانو مارتينيز", "E. Martinez", price = 2300, frames = 16, fw = 100, fh = 168, c = Color(0xFF0A5C66), c2 = Color(0xFF06363C)),
 		"alvarez" to PlayerDef("alvarez", "خوليان ألفاريز", "J. Alvarez", price = 2300, frames = 12, fw = 116, fh = 176, c = Color(0xFF80B5D6), c2 = Color(0xFF4B6A7E)),
 		"mahrez" to PlayerDef("mahrez", "رياض محرز", "Mahrez", price = 2300, frames = 12, fw = 100, fh = 176, c = Color(0xFF0F934E), c2 = Color(0xFF08562E)),
 		"rodrygo" to PlayerDef("rodrygo", "رودريجو", "Rodrygo", price = 2300, frames = 12, fw = 94, fh = 176, c = Color(0xFFE7CE09), c2 = Color(0xFF887905)),
@@ -99,7 +99,7 @@ object Players {
 		"casillas" to PlayerDef("casillas", "إيكر كاسياس", "Casillas", price = 2800, frames = 12, fw = 83, fh = 176, c = Color(0xFF7C681C), c2 = Color(0xFF493D10)),
 		"delpiero" to PlayerDef("delpiero", "أليساندرو دل بييرو", "Del Piero", price = 2800, frames = 12, fw = 104, fh = 176, c = Color(0xFF1353A0), c2 = Color(0xFF0B315E)),
 		"etoo" to PlayerDef("etoo", "صامويل إيتو", "Eto'o", price = 2800, frames = 16, fw = 97, fh = 176, c = Color(0xFF157344), c2 = Color(0xFF0C4428)),
-		"neuer" to PlayerDef("neuer", "مانويل نوير", "Neuer", price = 2800, frames = 16, fw = 103, fh = 176, c = Color(0xFF315C67), c2 = Color(0xFF1D363C)),
+		"neuer" to PlayerDef("neuer", "مانويل نوير", "Neuer", price = 2800, frames = 16, fw = 100, fh = 171, c = Color(0xFF315C67), c2 = Color(0xFF1D363C)),
 		"pirlo" to PlayerDef("pirlo", "أندريا بيرلو", "Pirlo", price = 2800, frames = 12, fw = 83, fh = 176, c = Color(0xFF1D58A8), c2 = Color(0xFF113362)),
 		"raul" to PlayerDef("raul", "راؤول", "Raul", price = 2800, frames = 12, fw = 83, fh = 176, c = Color(0xFFA11A2D), c2 = Color(0xFF5F0F1A)),
 		"rivaldo" to PlayerDef("rivaldo", "ريفالدو", "Rivaldo", price = 2800, frames = 10, fw = 86, fh = 176, c = Color(0xFFF0D625), c2 = Color(0xFF8D7E15)),
@@ -144,7 +144,7 @@ object Players {
 		"zidane" to PlayerDef("zidane", "زين الدين زيدان", "Zidane", price = 4600, frames = 12, fw = 93, fh = 176, c = Color(0xFF0D42A0), c2 = Color(0xFF07275E)),
 		"maradona" to PlayerDef("maradona", "دييجو مارادونا", "Maradona", price = 5000, frames = 12, fw = 94, fh = 176, c = Color(0xFF82AECB), c2 = Color(0xFF4C6677)),
 		"pele" to PlayerDef("pele", "بيليه", "Pele", price = 5200, frames = 12, fw = 92, fh = 176, c = Color(0xFFF3D228), c2 = Color(0xFF8F7B17)),
-		"messi" to PlayerDef("messi", "ليونيل ميسي", "Lionel Messi", gem = 85, frames = 12, fw = 131, fh = 176, c = Color(0xFF74ACDF), c2 = Color(0xFF2F75A3)),
+		"messi" to PlayerDef("messi", "ليونيل ميسي", "Lionel Messi", gem = 85, frames = 12, fw = 88, fh = 159, c = Color(0xFF74ACDF), c2 = Color(0xFF2F75A3)),
 		"ronaldo" to PlayerDef("ronaldo", "كريستيانو رونالدو", "Cristiano", gem = 90, frames = 12, fw = 91, fh = 176, c = Color(0xFFB61521), c2 = Color(0xFF6B0C13))
 	)
 
