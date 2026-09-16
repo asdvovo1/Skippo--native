@@ -46,6 +46,10 @@ object PlayerSprites {
 	// 128 > كل اللاعيبة (100 عادي + الأساطير)، فالكرت اللي اتفتح مرة مايترميش من
 	// الكاش وانت بترجع تزحلق - ده كان بيخلي الصور تتأخر وتتلخبط في المتجر.
 	private val thumbs = Cache(128)
+	/** Dedicated square face crops used by the store cards. */
+	private val posters = Cache(128)
+	private var ballImage: ImageBitmap? = null
+	private var ballLoaded = false
 
 	/** Call once from the activity, before anything tries to draw a player. */
 	fun init(ctx: Context) {
@@ -53,6 +57,10 @@ object PlayerSprites {
 	}
 
 	private fun decode(id: String, sample: Int): ImageBitmap? {
+		return decodeAsset("players/$id.webp", sample)
+	}
+
+	private fun decodeAsset(path: String, sample: Int): ImageBitmap? {
 		val a = am ?: return null
 		return try {
 			val o = BitmapFactory.Options().apply {
@@ -60,7 +68,7 @@ object PlayerSprites {
 				inScaled = false
 				inPreferredConfig = Bitmap.Config.ARGB_8888
 			}
-			a.open("players/$id.webp").use { BitmapFactory.decodeStream(it, null, o)?.asImageBitmap() }
+			a.open(path).use { BitmapFactory.decodeStream(it, null, o)?.asImageBitmap() }
 		} catch (_: Throwable) {
 			null
 		}
@@ -84,6 +92,24 @@ object PlayerSprites {
 
 	/** Already-decoded thumbnail, or null - lets the shop paint without blocking. */
 	fun cachedThumb(id: String): ImageBitmap? = thumbs.peek(id)
+
+	/** Face-only square poster generated from the runner art. */
+	fun poster(id: String): ImageBitmap? {
+		if (posters.has(id)) return posters.get(id)
+		val b = decodeAsset("posters/$id.webp", 2)
+		posters.put(id, b)
+		return b
+	}
+
+	fun cachedPoster(id: String): ImageBitmap? = posters.peek(id)
+
+	/** Shared football artwork for the runner's dribble animation. */
+	fun ball(): ImageBitmap? {
+		if (ballLoaded) return ballImage
+		ballLoaded = true
+		ballImage = decodeAsset("ball.webp", 1)
+		return ballImage
+	}
 
 	fun preload(id: String) {
 		sheet(id)

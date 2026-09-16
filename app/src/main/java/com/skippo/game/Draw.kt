@@ -1103,10 +1103,13 @@ class Renderer(val e: Engine, val S: Store) {
 			val a = 0.35f + sin((st.t * 0.3f).toDouble()).toFloat() * 0.15f
 			drawCircle(Color(0xFF4A9FE0), p.r * 1.6f, Offset(p.x, p.y), alpha = a.coerceIn(0f, 1f))
 		}
+		val ph = p.r * 2.55f
+		val pwd = ph * def.aspect
 		val sheet = PlayerSprites.sheet(def.id)
 		if (sheet == null) {
 			// art still decoding, or missing - a plain marker keeps the run readable
 			drawCircle(def.c, p.r * 0.6f, Offset(p.x, p.y))
+			drawRunnerBall(pwd)
 			return
 		}
 
@@ -1116,8 +1119,6 @@ class Renderer(val e: Engine, val S: Store) {
 		val cyc = e.runCyc
 		val fi = ((cyc.toInt() % def.frames) + def.frames) % def.frames
 
-		val ph = p.r * 2.55f
-		val pwd = ph * def.aspect
 		// Half the cube's squash: a person should flex, not turn into a pancake.
 		val sq = 1f + (p.sq - 1f) * 0.5f
 		// Anchored on the feet - the player's centre sits one radius above the ground.
@@ -1135,6 +1136,42 @@ class Renderer(val e: Engine, val S: Store) {
 					filterQuality = FilterQuality.Medium
 				)
 			}
+		}
+		drawRunnerBall(pwd)
+	}
+
+	/** A football stays just ahead of every runner, rolls while running, and
+	 * follows the player's vertical position through both jumps. */
+	private fun DrawScope.drawRunnerBall(playerWidth: Float) {
+		val br = p.r * 0.44f
+		val bounce = if (p.g) abs(sin(e.runCyc.toDouble() * 0.88)).toFloat() * p.r * 0.16f else 0f
+		val lead = max(p.r * 1.10f, playerWidth * 0.50f)
+		val bx = p.x + lead + br * 0.92f
+		val by = p.y + p.r - br - bounce
+		val groundY = H - e.gh()
+		val height = max(0f, groundY - (by + br))
+		val shadowScale = (1f - height / max(1f, e.maxRise() + p.r)).coerceIn(0.28f, 1f)
+		drawOval(
+			Color.Black.copy(alpha = 0.20f * shadowScale),
+			Offset(bx - br * shadowScale, groundY - br * 0.22f),
+			Size(br * 2f * shadowScale, br * 0.44f * shadowScale)
+		)
+		val image = PlayerSprites.ball()
+		if (image != null) {
+			val spin = st.dist / max(1f, br) * 180f / PI.toFloat()
+			rotate(spin, Offset(bx, by)) {
+				drawImage(
+					image = image,
+					srcOffset = IntOffset.Zero,
+					srcSize = IntSize(image.width, image.height),
+					dstOffset = IntOffset(Math.round(bx - br), Math.round(by - br)),
+					dstSize = IntSize(Math.round(br * 2f), Math.round(br * 2f)),
+					filterQuality = FilterQuality.Medium
+				)
+			}
+		} else {
+			drawCircle(Color.White, br, Offset(bx, by))
+			drawCircle(Color(0xFF1A1628), br * 0.34f, Offset(bx, by))
 		}
 	}
 

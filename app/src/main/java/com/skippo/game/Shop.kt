@@ -519,10 +519,10 @@ private fun PlayerPreview(def: PlayerDef) {
 	// تحميل جديد - يعني الكرت يفضل لابس صورة اللاعب اللي قبله للأبد.
 	// الحل: نخزّن الـ id مع الصورة، ومانرسمش غير لما الاتنين يبقوا نفس اللاعب.
 	val slot by produceState<Pair<String, ImageBitmap?>?>(null, id) {
-		val cached = PlayerSprites.cachedThumb(id)
+		val cached = PlayerSprites.cachedPoster(id)
 		value = id to cached
 		if (cached == null) {
-			value = id to withContext(Dispatchers.IO) { PlayerSprites.thumb(id) }
+			value = id to withContext(Dispatchers.IO) { PlayerSprites.poster(id) }
 		}
 	}
 	val thumb = slot?.takeIf { it.first == id }?.second
@@ -536,16 +536,12 @@ private fun PlayerPreview(def: PlayerDef) {
 		)
 		val img = thumb
 		if (img != null) {
-			val fw = img.width / def.frames
-			val k = def.frames / 3
-			val h = s * 0.84f
-			val w = h * def.aspect
 			drawImage(
 				image = img,
-				srcOffset = IntOffset(k * fw, 0),
-				srcSize = IntSize(fw, img.height),
-				dstOffset = IntOffset(Math.round((s - w) / 2f), Math.round(s - h - s * 0.04f)),
-				dstSize = IntSize(Math.round(w), Math.round(h)),
+				srcOffset = IntOffset.Zero,
+				srcSize = IntSize(img.width, img.height),
+				dstOffset = IntOffset(Math.round(s * 0.04f), Math.round(s * 0.04f)),
+				dstSize = IntSize(Math.round(s * 0.92f), Math.round(s * 0.92f)),
 				filterQuality = FilterQuality.Medium
 			)
 		}

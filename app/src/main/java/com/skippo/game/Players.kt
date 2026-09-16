@@ -144,6 +144,7 @@ object Players {
 		"zidane" to PlayerDef("zidane", "زين الدين زيدان", "Zidane", price = 4600, frames = 12, fw = 93, fh = 176, c = Color(0xFF0D42A0), c2 = Color(0xFF07275E)),
 		"maradona" to PlayerDef("maradona", "دييجو مارادونا", "Maradona", price = 5000, frames = 12, fw = 94, fh = 176, c = Color(0xFF82AECB), c2 = Color(0xFF4C6677)),
 		"pele" to PlayerDef("pele", "بيليه", "Pele", price = 5200, frames = 12, fw = 92, fh = 176, c = Color(0xFFF3D228), c2 = Color(0xFF8F7B17)),
+		"messi" to PlayerDef("messi", "ليونيل ميسي", "Lionel Messi", gem = 85, frames = 12, fw = 131, fh = 176, c = Color(0xFF74ACDF), c2 = Color(0xFF2F75A3)),
 		"ronaldo" to PlayerDef("ronaldo", "كريستيانو رونالدو", "Cristiano", gem = 90, frames = 12, fw = 91, fh = 176, c = Color(0xFFB61521), c2 = Color(0xFF6B0C13))
 	)
 
